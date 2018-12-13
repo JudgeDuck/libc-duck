@@ -16,7 +16,10 @@
 
 #define malloc_start _ZN9judgeduck12malloc_startE
 
+#define contestant_done _ZN9judgeduck15contestant_doneE
+
 extern void sys_quit_judge();
+extern unsigned * volatile contestant_done;
 
 extern char *stdin_content;
 extern int stdin_size;
@@ -133,6 +136,7 @@ long __syscall_duck(long n, long a1, long a2, long a3, long a4, long a5, long a6
 		case SYS_fstat:
 			return duck_fstat((int) a1, (struct stat *) a2);
 		case SYS_exit:
+			*contestant_done = 1;
 			sys_quit_judge();
 			while (1);
 		default:

@@ -19,7 +19,7 @@
 #define contestant_done _ZN9judgeduck15contestant_doneE
 
 extern void sys_quit_judge();
-extern unsigned * volatile contestant_done;
+extern volatile unsigned *contestant_done;
 
 extern char *stdin_content;
 extern int stdin_size;

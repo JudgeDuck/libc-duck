@@ -71,6 +71,9 @@ static size_t duck_readv(int fd, const struct iovec *iov, int cnt) {
 }
 
 static size_t duck_write(int fd, char *buf, size_t len) {
+	if (fd == 2) {
+		return len;
+	}
 	if (fd != 1) {
 		return 0;
 	}
@@ -116,6 +119,13 @@ static int duck_fstat(int fd, struct stat *st) {
 		st->st_blocks = (stdout_size + 4095) / 4096;
 		return 0;
 	}
+	if (fd == 2) {
+		st->st_mode = S_IFREG | 0644;
+		st->st_size = 0;
+		st->st_blksize = 4096;
+		st->st_blocks = 0;
+		return 0;
+	}
 	return -1;
 }
 
@@ -139,6 +149,9 @@ long __syscall_duck(long n, long a1, long a2, long a3, long a4, long a5, long a6
 			*contestant_done = 1;
 			sys_quit_judge();
 			while (1);
+		case SYS_tkill:
+			// for raise()
+			__asm__ volatile("movl $-1, %eax; int $0x30;");
 		default:
 			return -1;
 	}
